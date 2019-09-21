@@ -1,1 +1,6 @@
+_build/
+*.bc
+*.exe
+.merlin
+
 /index_calculus

@@ -1,8 +1,0 @@
-Le programme principal (celui où se trouve le main()) s'appelle
-"calc_index.c".
-
-
-Pour compiler le programme, entrez la commande :
-     gcc -o index_calculus src/*.c -lgmp
-Puis lancez le programme en entrant :
-     ./index_calculus

@@ -1,0 +1,5 @@
+(env (_ (flags (:standard -w +a))))
+
+(executables
+ (libraries batteries zarith)
+ (names calc_index))
