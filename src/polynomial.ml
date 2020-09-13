@@ -7,9 +7,9 @@ module Make
        val zero : t
        val one : t
        val equal : t -> t -> bool
-       val ( + ) : t -> t -> t
-       val ( * ) : t -> t -> t
-       val ( ~- ) : t -> t
+       val add : t -> t -> t
+       val mul : t -> t -> t
+       val neg : t -> t
        val inv : t -> t
        val to_string : t -> string
      end)
@@ -29,8 +29,9 @@ module Make
   let equal p q =
     try List.for_all2 Ring.equal p q with Invalid_argument _ -> false
 
-  let neg p = List.map (fun c -> Ring.(-c)) p
+  let neg p = List.map Ring.neg p
 
+  (* deg(0) = 0 or not defined? deg(k) = 1 where k <> 0?  *)
   let deg p = List.length p - 1
 
   let add p q =
@@ -38,12 +39,15 @@ module Make
       let p, q = ExtStdlib.List.equalize_lengths p q in
       try
         List.map2 (fun a b ->
-          Ring.(BatOption.default zero a + BatOption.default zero b)
+          Ring.add
+            (BatOption.default Ring.zero a) (BatOption.default Ring.zero b)
         ) p q
       with
       | Invalid_argument _ -> assert false
     in
-    match List.rev @@ BatList.drop_while Ring.(equal zero) (List.rev r) with
+    match
+      List.rev @@ BatList.drop_while (Ring.equal Ring.zero) (List.rev r)
+    with
     | [] -> zero
     | _ :: _ as r -> r
 
@@ -52,7 +56,7 @@ module Make
   let monomial (i : int) (a : Ring.t) : t = BatList.make i Ring.zero @ [a]
 
   let unsafe_mul_by_monomial (i : int) (a : Ring.t) (p : t) : t =
-    BatList.make i Ring.zero @ List.map (fun b -> Ring.(a * b)) p
+    BatList.make i Ring.zero @ List.map (Ring.mul a) p
 
   let mul p q =
     BatList.fold_lefti (fun acc i a ->
@@ -69,7 +73,8 @@ module Make
       then (acc, p)
       else
         let monomial =
-          let a = Ring.(inv (get_coeff deg_q q) * (get_coeff deg_p p))
+          let a =
+            Ring.mul (Ring.inv @@ get_coeff deg_q q) (get_coeff deg_p p)
           and i = deg_p - deg q in
           monomial i a
         in

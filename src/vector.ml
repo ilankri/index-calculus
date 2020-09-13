@@ -12,3 +12,10 @@ let equal v v' =
   | Invalid_argument _ -> false
 
 let print v = print_string @@ String.concat " " (List.map Z.to_string v)
+
+let scal_mult k v = List.map (Z.mul k) v
+
+(* TODO: Handle the case where vector are not of the same length.  *)
+let add v v' = List.map2 Z.add v v'
+
+let set_nth n i v = ExtStdlib.List.replace_nth n i v

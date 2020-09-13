@@ -1,13 +1,12 @@
-(* p designe la caracteristique de Fq  *)
 module Make
     (Ring : sig
        type t
        val zero : t
        val one : t
        val equal : t -> t -> bool
-       val ( + ) : t -> t -> t
-       val ( * ) : t -> t -> t
-       val ( ~- ) : t -> t
+       val add : t -> t -> t
+       val mul : t -> t -> t
+       val neg : t -> t
        val inv : t -> t
        val to_string : t -> string
      end)
@@ -38,7 +37,9 @@ module Make
      [fst res] designe le quotient et [snd res] le reste *)
   val div_rem : t -> t -> t * t
 
+  (* provide to_string only *)
   val print : t -> unit
 
+  (* TODO: of_list or make but safe *)
   val unsafe_of_list : Ring.t list -> t
 end
